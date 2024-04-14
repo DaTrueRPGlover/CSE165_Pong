@@ -1,15 +1,8 @@
-# CSE165_ImageProcessor
-Image processor project for CSE 165 at UC Merced
-The temptative functions for this image processor are:
-1. Color to B&W                  *
-2. Paintbrush                    ?
-3. Resize                        *
-4. Rotate                        *
-5. Crop                          **
-6. Adding shapes to the images   ***
-7. Recolor and invert color      *
-8. Gaussian filter               **
-9. Median filter                 *
-10. Sharpening image             *
+# Pong (2019)
 
-More ideas can be pitched and put here, the starts are meant to represent the expected difficulty of implementing the functions
+A simple C++ clone of Pong.
+
+[Here is a blog post about it.](https://austinmorlan.com/posts/pong_clone/)
+
+![Demo](https://austinmorlan.com/posts/pong_clone/media/demo.gif)
+
