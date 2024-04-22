@@ -5,6 +5,7 @@
 #include <chrono>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <iostream>
 
 enum Buttons{
     P1Up = 0,
@@ -31,8 +32,9 @@ Vector& Vector::operator+=(const Vector& rhs) { x += rhs.x; y += rhs.y; return *
 Vector Vector::operator*(float rhs) const { return Vector(x * rhs, y * rhs); }
 
 // Ball definitions
-Ball::Ball(Vector position){
+Ball::Ball(Vector position, Vector velocity){
     this->position = position;
+    this->velocity = velocity;
     rect.x = static_cast<int>(position.x);
     rect.y = static_cast<int>(position.y);
     rect.w = BALL_WIDTH;
@@ -109,8 +111,109 @@ void Paddle::draw(SDL_Renderer* renderer){
     SDL_RenderFillRect(renderer, &rect);
 }
 
+Vector getPosition(const Paddle& paddle){
+    return paddle.position;
+}
+
 void setVelocity(Paddle& paddle, Vector newVelocity){
     paddle.velocity = newVelocity;
+}
+
+contact CheckPaddleCollision(Ball const& ball, Paddle const& paddle)
+{
+	float ballLeft = ball.position.x;
+	float ballRight = ball.position.x + BALL_WIDTH;
+	float ballTop = ball.position.y;
+	float ballBottom = ball.position.y + BALL_HEIGHT;
+
+	float paddleLeft = paddle.position.x;
+	float paddleRight = paddle.position.x + PADDLE_WIDTH;
+	float paddleTop = paddle.position.y;
+	float paddleBottom = paddle.position.y + PADDLE_HEIGHT;
+
+    contact contact{};
+
+	if (ballLeft >= paddleRight)
+	{
+		return contact;
+	}
+
+	if (ballRight <= paddleLeft)
+	{
+		return contact;
+	}
+
+	if (ballTop >= paddleBottom)
+	{
+		return contact;
+	}
+
+	if (ballBottom <= paddleTop)
+	{
+		return contact;
+	}
+
+	float paddleRangeUpper = paddleBottom - (2.0f * PADDLE_HEIGHT / 3.0f);
+	float paddleRangeMiddle = paddleBottom - (PADDLE_HEIGHT / 3.0f);
+
+	if (ball.velocity.x < 0)
+	{
+		// Left paddle
+		contact.penetration = paddleRight - ballLeft;
+	}
+	else if (ball.velocity.x > 0)
+	{
+		// Right paddle
+		contact.penetration = paddleLeft - ballRight;
+	}
+
+	if ((ballBottom > paddleTop)
+	    && (ballBottom < paddleRangeUpper))
+	{
+		contact.type = collisionTypes::top;
+	}
+	else if ((ballBottom > paddleRangeUpper)
+	     && (ballBottom < paddleRangeMiddle))
+	{
+		contact.type = collisionTypes::mid;
+	}
+	else
+	{
+		contact.type = collisionTypes::bottom;
+	}
+
+	return contact;
+}
+
+contact CheckWallCollision(Ball const& ball)
+{
+	float bLeft = ball.position.x;
+	float bRight = ball.position.x + BALL_WIDTH;
+	float bTop = ball.position.y;
+	float bBottom = ball.position.y + BALL_HEIGHT;
+
+	contact contact{};
+
+	if (bLeft < 0.0f)
+	{
+		contact.type = collisionTypes::left;
+	}
+	else if (bRight > WINDOW_WIDTH)
+	{
+		contact.type = collisionTypes::right;
+	}
+	else if (bTop < 0.0f)
+	{
+		contact.type = collisionTypes::top;
+		contact.penetration = -bTop;
+	}
+	else if (bBottom > WINDOW_HEIGHT)
+	{
+		contact.type = collisionTypes::bottom;
+		contact.penetration = WINDOW_HEIGHT - bBottom;
+	}
+
+	return contact;
 }
 
 class PlayerScore
@@ -142,6 +245,19 @@ public:
 		SDL_RenderCopy(renderer, texture, nullptr, &rect);
 	}
 
+    void score(int score){
+        SDL_FreeSurface(surface);
+        SDL_DestroyTexture(texture);
+
+        surface = TTF_RenderText_Solid(font, std::to_string(score).c_str(), {0xFF, 0xFF, 0xFF, 0xFF});
+        texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+        int width, height;
+        SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+        rect.w = width;
+        rect.h = height;
+    }
+
 	SDL_Renderer* renderer;
 	TTF_Font* font;
 	SDL_Surface* surface{};
@@ -166,7 +282,7 @@ int main() {
 
     Vector initBallPos = Vector((WINDOW_WIDTH / 2.0f) - (BALL_WIDTH / 2.0f), (WINDOW_HEIGHT / 2.0f) - (BALL_HEIGHT / 2.0f));
 
-    Ball gameBall(initBallPos);
+    Ball gameBall(initBallPos, Vector(BALL_S, 0.0f));
 
     Vector initPaddle1Pos = Vector(50.0f , (WINDOW_HEIGHT / 2.0f) - (PADDLE_HEIGHT / 2.0f));
 
@@ -178,6 +294,9 @@ int main() {
 
     // Game logic
     {
+        int p1Score = 0;
+        int p2Score = 0;
+
         bool running = true;
 
         bool buttons[4] = {};
@@ -246,9 +365,6 @@ int main() {
                 setVelocity(playerTwo, Vector(0.0f, 0.0f));
             }
 
-            playerOne.update(dt);
-            playerTwo.update(dt);
-
             // Clear the window to black
             SDL_SetRenderDrawColor(renderer, 0x0, 0x0, 0x0, 0xFF);
             SDL_RenderClear(renderer);
@@ -263,8 +379,38 @@ int main() {
                 }
             }
 
+            playerOne.update(dt);
+            playerTwo.update(dt);
+
             // Update and draw the ball
             gameBall.update(dt);
+
+            contact contact1 = CheckPaddleCollision(gameBall, playerOne);
+
+            if (contact1 = CheckPaddleCollision(gameBall, playerOne);
+	            contact1.type != collisionTypes::none)
+            {
+            	gameBall.collideWithPaddle(contact1);
+            }
+            else if (contact1 = CheckPaddleCollision(gameBall, playerTwo);
+            	contact1.type != collisionTypes::none)
+            {
+            	gameBall.collideWithPaddle(contact1);
+            }
+            else if (contact1 = CheckWallCollision(gameBall); contact1.type != collisionTypes::none){
+                gameBall.collideWithWall(contact1);
+            }
+
+            if (contact1.type == collisionTypes::left){
+                p2Score++;
+                playerTwoScoreText.score(p2Score);
+            }
+
+            if (contact1.type == collisionTypes::right){
+                p1Score++;
+                playerOneScoreText.score(p1Score);
+            }
+
             gameBall.draw(renderer);
 
             playerOne.draw(renderer);

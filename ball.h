@@ -13,7 +13,7 @@ public:
 	Vector velocity;
 	SDL_Rect rect{};
 	
-    Ball(Vector position);
+    Ball(Vector position, Vector velocity);
 
 	void update(float dt);
 
