@@ -1,0 +1,11 @@
+(NEED AT LEAST 3 PARAGRAPHS)
+
+For our project, we have decided that we're putting our own spin on the 
+classic game of Pong. 
+
+
+2. The significant feature(s) each member of the group was responsible for
+Cheska is responsible of the implementation of the graphical user
+ interface (GUI) utilizing OpenGL.
+
+3. How you used object-oriented programming concepts in your implementatio
