@@ -19,9 +19,16 @@ const int WINDOW_HEIGHT = 720;
 const int BALL_WIDTH = 15;
 const int BALL_HEIGHT = 15;
 const int PADDLE_WIDTH = 10;
-const int PADDLE_HEIGHT = 100;
 const float BALL_S = 0.5f;
-const float PADDLE_S = 1.0f;
+
+const int PADDLE_HEIGHT_NORM = 100;
+const float PADDLE_S_NORM = 1.0f;
+
+const int PADDLE_HEIGHT_TALL = 250;
+const float PADDLE_S_SLOW = 0.3f;
+
+const int PADDLE_HEIGHT_SHORT = 50;
+const float PADDLE_S_FAST = 2.0f;
 
 
 // Vector definitions
@@ -90,7 +97,7 @@ Paddle::Paddle(Vector position, Vector velocity){
     rect.x = static_cast<int>(position.x);
     rect.y = static_cast<int>(position.y);
     rect.w = PADDLE_WIDTH;
-    rect.h = PADDLE_HEIGHT;
+    rect.h = PADDLE_HEIGHT_NORM;
 }
 
 void Paddle::update(float dt){
@@ -100,8 +107,8 @@ void Paddle::update(float dt){
         position.y = 0;
     }
 
-    else if (position.y > WINDOW_HEIGHT - PADDLE_HEIGHT){
-        position.y = WINDOW_HEIGHT - PADDLE_HEIGHT;
+    else if (position.y > WINDOW_HEIGHT - PADDLE_HEIGHT_NORM){
+        position.y = WINDOW_HEIGHT - PADDLE_HEIGHT_NORM;
     }
 }
 
@@ -129,7 +136,7 @@ contact CheckPaddleCollision(Ball const& ball, Paddle const& paddle)
 	float paddleLeft = paddle.position.x;
 	float paddleRight = paddle.position.x + PADDLE_WIDTH;
 	float paddleTop = paddle.position.y;
-	float paddleBottom = paddle.position.y + PADDLE_HEIGHT;
+	float paddleBottom = paddle.position.y + PADDLE_HEIGHT_NORM;
 
     contact contact{};
 
@@ -153,8 +160,8 @@ contact CheckPaddleCollision(Ball const& ball, Paddle const& paddle)
 		return contact;
 	}
 
-	float paddleRangeUpper = paddleBottom - (2.0f * PADDLE_HEIGHT / 3.0f);
-	float paddleRangeMiddle = paddleBottom - (PADDLE_HEIGHT / 3.0f);
+	float paddleRangeUpper = paddleBottom - (2.0f * PADDLE_HEIGHT_NORM / 3.0f);
+	float paddleRangeMiddle = paddleBottom - (PADDLE_HEIGHT_NORM / 3.0f);
 
 	if (ball.velocity.x < 0)
 	{
@@ -284,11 +291,11 @@ int main() {
 
     Ball gameBall(initBallPos, Vector(BALL_S, 0.0f));
 
-    Vector initPaddle1Pos = Vector(50.0f , (WINDOW_HEIGHT / 2.0f) - (PADDLE_HEIGHT / 2.0f));
+    Vector initPaddle1Pos = Vector(50.0f , (WINDOW_HEIGHT / 2.0f) - (PADDLE_HEIGHT_NORM / 2.0f));
 
     Paddle playerOne(initPaddle1Pos, Vector(0.0f, 0.0f));
 
-    Vector initPaddle2Pos = Vector(WINDOW_WIDTH - 50.0f, (WINDOW_HEIGHT / 2.0f) - (PADDLE_HEIGHT / 2.0f));
+    Vector initPaddle2Pos = Vector(WINDOW_WIDTH - 50.0f, (WINDOW_HEIGHT / 2.0f) - (PADDLE_HEIGHT_NORM / 2.0f));
 
     Paddle playerTwo(initPaddle2Pos, Vector(0.0f, 0.0f));
 
@@ -306,7 +313,11 @@ int main() {
         // Continue looping and processing events until user exits
         while (running) {
             auto startTime = std::chrono::high_resolution_clock::now();
-            
+
+            if( p1Score==21 || p2Score==21 ){
+                break;//first to 21 wins, add a congrats or something idk
+            }
+
             SDL_Event event;
             while (SDL_PollEvent(&event)) {
                 if (event.type == SDL_QUIT) {
@@ -346,20 +357,20 @@ int main() {
             }
 
             if(buttons[Buttons::P1Up]){
-                setVelocity(playerOne, Vector(0.0f, -PADDLE_S));
+                setVelocity(playerOne, Vector(0.0f, -PADDLE_S_NORM));
             }
             else if(buttons[Buttons::P1Down]){
-                setVelocity(playerOne, Vector(0.0f, PADDLE_S));
+                setVelocity(playerOne, Vector(0.0f, PADDLE_S_NORM));
             }
             else{
                 setVelocity(playerOne, Vector(0.0f, 0.0f));
             }
 
             if(buttons[Buttons::P2Up]){
-                setVelocity(playerTwo, Vector(0.0f, -PADDLE_S));
+                setVelocity(playerTwo, Vector(0.0f, -PADDLE_S_NORM));
             }
             else if(buttons[Buttons::P2Down]){
-                setVelocity(playerTwo, Vector(0.0f, PADDLE_S));
+                setVelocity(playerTwo, Vector(0.0f, PADDLE_S_NORM));
             }
             else{
                 setVelocity(playerTwo, Vector(0.0f, 0.0f));
@@ -422,7 +433,7 @@ int main() {
 			// Present the backbuffer
 			SDL_RenderPresent(renderer);
 
-            auto stopTime = std::chrono::high_resolution_clock::now();
+            	auto stopTime = std::chrono::high_resolution_clock::now();
 	        dt = std::chrono::duration<float, std::chrono::milliseconds::period>(stopTime - startTime).count();
 
 		}
@@ -431,8 +442,8 @@ int main() {
 	// Cleanup
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
-    TTF_CloseFont(scoreFont);
-    TTF_Quit();
+   	TTF_CloseFont(scoreFont);
+    	TTF_Quit();
 	SDL_Quit();
 
 	return 0;
