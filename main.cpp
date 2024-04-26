@@ -30,6 +30,9 @@ const float PADDLE_S_SLOW = 0.3f;
 const int PADDLE_HEIGHT_SHORT = 50;
 const float PADDLE_S_FAST = 2.0f;
 
+const float p1Speed = 0.0f;
+const float p2Speed=0.0f;
+
 
 // Vector definitions
 Vector::Vector() : x(0.0f), y(0.0f) {}
@@ -290,6 +293,42 @@ int main() {
     Mix_Chunk* pointScored = Mix_LoadWAV("point.wav");
     Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3");
 
+    //starting menu
+    {
+        bool starting = true;
+
+        int p1Choice=0;
+        int p2Choice=0;
+        
+
+        //initialize gui  here
+	
+        while(starting){
+            //implement gui code here
+            if(p1Choice==0){
+                p1Speed=PADDLE_S_SLOW;
+            }else if( p1Choice==1){
+                p1Speed=PADDLE_S_NORM;
+            }else if(p1Choice==2){
+                p1Speed=PADDLE_S_FAST;
+            }else{
+                p1Speed=PADDLE_S_NORM;
+            }
+
+            if(p2Choice==0){
+                p2Speed=PADDLE_S_SLOW;
+            }else if( p2Choice==1){
+                p2Speed=PADDLE_S_NORM;
+            }else if(p2Choice==2){
+                p2Speed=PADDLE_S_FAST;
+            }else{
+                p2Speed=PADDLE_S_NORM;
+            }
+            //if start is clicked
+            break;
+        }
+    }
+
     // Game logic
     {
         int p1Score = 0;
@@ -349,21 +388,21 @@ int main() {
                 }
             }
 
-            if(buttons[Buttons::P1Up]){
-                setVelocity(playerOne, Vector(0.0f, -PADDLE_S_NORM));
+           if(buttons[Buttons::P1Up]){
+                setVelocity(playerOne, Vector(0.0f, -p1Speed));
             }
             else if(buttons[Buttons::P1Down]){
-                setVelocity(playerOne, Vector(0.0f, PADDLE_S_NORM));
+                setVelocity(playerOne, Vector(0.0f, p1Speed));
             }
             else{
                 setVelocity(playerOne, Vector(0.0f, 0.0f));
             }
 
             if(buttons[Buttons::P2Up]){
-                setVelocity(playerTwo, Vector(0.0f, -PADDLE_S_NORM));
+                setVelocity(playerTwo, Vector(0.0f, -p2Speed));
             }
             else if(buttons[Buttons::P2Down]){
-                setVelocity(playerTwo, Vector(0.0f, PADDLE_S_NORM));
+                setVelocity(playerTwo, Vector(0.0f, p2Speed));
             }
             else{
                 setVelocity(playerTwo, Vector(0.0f, 0.0f));
