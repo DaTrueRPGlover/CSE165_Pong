@@ -30,10 +30,10 @@ const float PADDLE_S_SLOW = 0.3f;
 const int PADDLE_HEIGHT_SHORT = 50;
 const float PADDLE_S_FAST = 2.0f;
 
-const float p1Speed = 0.0f;
-const float p2Speed=0.0f;
-const int p1Height = 0;
-const int p2Height = 0;
+ float p1Speed = 0.0f;
+ float p2Speed=0.0f;
+ int p1Height = 0;
+int p2Height = 0;
 
 
 // Vector definitions
@@ -479,8 +479,9 @@ int main() {
 
             gameBall.draw(renderer);
 
-            playerOne.draw(renderer);
-            playerTwo.draw(renderer);
+            //cf changed
+            playerOne.draw(renderer, PADDLE_HEIGHT_NORM);
+            playerTwo.draw(renderer, PADDLE_HEIGHT_NORM);
 
             playerOneScoreText.Draw();
             playerTwoScoreText.Draw();
