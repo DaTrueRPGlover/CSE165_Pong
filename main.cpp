@@ -261,6 +261,7 @@ int main() {
     // Initialize SDL components
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 256);
 
     SDL_Window* window = SDL_CreateWindow("Pong", 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
@@ -284,6 +285,11 @@ int main() {
 
     Paddle playerTwo(initPaddle2Pos, Vector(0.0f, 0.0f));
 
+    Mix_Chunk* wallHit = Mix_LoadWAV("wall.wav");
+    Mix_Chunk* paddleHit = Mix_LoadWAV("paddle.wav");
+    Mix_Chunk* pointScored = Mix_LoadWAV("point.wav");
+    Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3");
+
     // Game logic
     {
         int p1Score = 0;
@@ -297,6 +303,8 @@ int main() {
 
         // Continue looping and processing events until user exits
         while (running) {
+            //Mix_PlayChannel(-1, menuMusic, 0); //Use this function to run the menu music while the players select difficulty
+
             auto startTime = std::chrono::high_resolution_clock::now();
 
             if( p1Score==7 || p2Score==7 ){
@@ -387,25 +395,34 @@ int main() {
 	            contact1.type != collisionTypes::none)
             {
             	gameBall.collideWithPaddle(contact1);
+
+                Mix_PlayChannel(-1, paddleHit, 0);
             }
             else if (contact1 = CheckPaddleCollision(gameBall, playerTwo);
             	contact1.type != collisionTypes::none)
             {
             	gameBall.collideWithPaddle(contact1);
+
+                Mix_PlayChannel(-1, paddleHit, 0);
             }
             else if (contact1 = wallCollision(gameBall); contact1.type != collisionTypes::none){
                 gameBall.collideWithWall(contact1);
-            }
 
-            if (contact1.type == collisionTypes::left){
-                p2Score++;
-                playerTwoScoreText.score(p2Score);
-            }
+                if (contact1.type == collisionTypes::left){
+                    p2Score++;
+                    playerTwoScoreText.score(p2Score);
 
-            if (contact1.type == collisionTypes::right){
-                p1Score++;
-                playerOneScoreText.score(p1Score);
-            }
+                    Mix_PlayChannel(-1, pointScored, 0);
+                }
+
+                else if (contact1.type == collisionTypes::right){
+                    p1Score++;
+                    playerOneScoreText.score(p1Score);
+
+                    Mix_PlayChannel(-1, pointScored, 0);
+                }
+
+                else{ Mix_PlayChannel(-1, wallHit, 0); }}
 
             gameBall.draw(renderer);
 
@@ -425,9 +442,13 @@ int main() {
 	}
 
 	// Cleanup
+    Mix_FreeChunk(wallHit);
+    Mix_FreeChunk(paddleHit);
+    Mix_FreeChunk(pointScored);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
    	TTF_CloseFont(scoreFont);
+    Mix_Quit();
     TTF_Quit();
 	SDL_Quit();
 
