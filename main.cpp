@@ -106,15 +106,15 @@ Paddle::Paddle(Vector position, Vector velocity, int height){
     
 }
 
-void Paddle::update(float dt){
+void Paddle::update(float dt,int paddleHeight){
     position += velocity * dt;
 
     if (position.y < 0){
         position.y = 0;
     }
 
-    else if (position.y > WINDOW_HEIGHT - PADDLE_HEIGHT_NORM){
-        position.y = WINDOW_HEIGHT - PADDLE_HEIGHT_NORM;
+    else if (position.y > WINDOW_HEIGHT - paddleHeight){
+        position.y = WINDOW_HEIGHT - paddleHeight;
     }
 }
 
@@ -436,8 +436,8 @@ int main() {
                 }
             }
 
-            playerOne.update(dt);
-            playerTwo.update(dt);
+            playerOne.update(dt,p1Height);
+            playerTwo.update(dt,p2Height);
 
             // Update and draw the ball
             gameBall.update(dt);
