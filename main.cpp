@@ -32,6 +32,8 @@ const float PADDLE_S_FAST = 2.0f;
 
 const float p1Speed = 0.0f;
 const float p2Speed=0.0f;
+const int p1Height = 0;
+const int p2Height = 0;
 
 
 // Vector definitions
@@ -94,13 +96,14 @@ void Ball::collideWithWall(contact const& contact) {
 
 //Paddle definitions
 
-Paddle::Paddle(Vector position, Vector velocity){
+Paddle::Paddle(Vector position, Vector velocity, int height){
     this->position = position;
     this->velocity = velocity;
     rect.x = static_cast<int>(position.x);
     rect.y = static_cast<int>(position.y);
     rect.w = PADDLE_WIDTH;
-    rect.h = PADDLE_HEIGHT_NORM;
+    rect.h = height;
+    
 }
 
 void Paddle::update(float dt){
@@ -115,8 +118,9 @@ void Paddle::update(float dt){
     }
 }
 
-void Paddle::draw(SDL_Renderer* renderer){
+void Paddle::draw(SDL_Renderer* renderer,int height){
     rect.y = static_cast<int>(position.y);
+    rect.h=height;
 
     SDL_RenderFillRect(renderer, &rect);
 }
@@ -129,7 +133,7 @@ void setVelocity(Paddle& paddle, Vector newVelocity){
     paddle.velocity = newVelocity;
 }
 
-contact CheckPaddleCollision(Ball const& ball, Paddle const& paddle){
+contact CheckPaddleCollision(Ball const& ball, Paddle const& paddle,int paddleHeight){
 	float bLeft = ball.position.x;
 	float bRight = ball.position.x + BALL_WIDTH;
 	float bTop = ball.position.y;
@@ -138,7 +142,7 @@ contact CheckPaddleCollision(Ball const& ball, Paddle const& paddle){
 	float pLeft = paddle.position.x;
 	float pRight = paddle.position.x + PADDLE_WIDTH;
 	float pTop = paddle.position.y;
-	float pBottom = paddle.position.y + PADDLE_HEIGHT_NORM;
+	float pBottom = paddle.position.y + paddleHeight;
 
     contact contact{};
 
@@ -158,8 +162,8 @@ contact CheckPaddleCollision(Ball const& ball, Paddle const& paddle){
 		return contact;
 	}
 
-	float pUpper = pBottom - (2.0f * PADDLE_HEIGHT_NORM / 3.0f);
-	float pMiddle = pBottom - (PADDLE_HEIGHT_NORM / 3.0f);
+	float pUpper = pBottom - (2.0f * paddleHeight / 3.0f);
+	float pMiddle = pBottom - (paddleHeight / 3.0f);
 
 	if (ball.velocity.x < 0){
 		// Left paddle
@@ -271,27 +275,7 @@ int main() {
 
     TTF_Font* scoreFont = TTF_OpenFont("Pixellettersfull-BnJ5.ttf", 120);
 
-    PlayerScore playerOneScoreText(Vector(WINDOW_WIDTH / 4, 20), renderer, scoreFont);
-
-    PlayerScore playerTwoScoreText(Vector(3 * WINDOW_WIDTH / 4, 20), renderer, scoreFont);
-
-
-    Vector initBallPos = Vector((WINDOW_WIDTH / 2.0f) - (BALL_WIDTH / 2.0f), (WINDOW_HEIGHT / 2.0f) - (BALL_HEIGHT / 2.0f));
-
-    Ball gameBall(initBallPos, Vector(BALL_S, 0.0f));
-
-    Vector initPaddle1Pos = Vector(50.0f , (WINDOW_HEIGHT / 2.0f) - (PADDLE_HEIGHT_NORM / 2.0f));
-
-    Paddle playerOne(initPaddle1Pos, Vector(0.0f, 0.0f));
-
-    Vector initPaddle2Pos = Vector(WINDOW_WIDTH - 50.0f, (WINDOW_HEIGHT / 2.0f) - (PADDLE_HEIGHT_NORM / 2.0f));
-
-    Paddle playerTwo(initPaddle2Pos, Vector(0.0f, 0.0f));
-
-    Mix_Chunk* wallHit = Mix_LoadWAV("wall.wav");
-    Mix_Chunk* paddleHit = Mix_LoadWAV("paddle.wav");
-    Mix_Chunk* pointScored = Mix_LoadWAV("point.wav");
-    Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3");
+    
 
     //starting menu
     {
@@ -302,32 +286,62 @@ int main() {
         
 
         //initialize gui  here
-	
+
         while(starting){
             //implement gui code here
             if(p1Choice==0){
                 p1Speed=PADDLE_S_SLOW;
+                p1Height=PADDLE_HEIGHT_TALL;
             }else if( p1Choice==1){
                 p1Speed=PADDLE_S_NORM;
+                p1Height=PADDLE_HEIGHT_NORM;
             }else if(p1Choice==2){
                 p1Speed=PADDLE_S_FAST;
+                p1Height=PADDLE_HEIGHT_SHORT;
             }else{
                 p1Speed=PADDLE_S_NORM;
+                p1Height=PADDLE_HEIGHT_NORM;
             }
 
             if(p2Choice==0){
                 p2Speed=PADDLE_S_SLOW;
+                p2Height=PADDLE_HEIGHT_TALL;
             }else if( p2Choice==1){
                 p2Speed=PADDLE_S_NORM;
+                p2Height=PADDLE_HEIGHT_NORM;
             }else if(p2Choice==2){
                 p2Speed=PADDLE_S_FAST;
+                p2Height=PADDLE_HEIGHT_SHORT;
             }else{
                 p2Speed=PADDLE_S_NORM;
+                p2Height=PADDLE_HEIGHT_NORM;
             }
             //if start is clicked
             break;
         }
     }
+
+    PlayerScore playerOneScoreText(Vector(WINDOW_WIDTH / 4, 20), renderer, scoreFont);
+
+    PlayerScore playerTwoScoreText(Vector(3 * WINDOW_WIDTH / 4, 20), renderer, scoreFont);
+
+
+    Vector initBallPos = Vector((WINDOW_WIDTH / 2.0f) - (BALL_WIDTH / 2.0f), (WINDOW_HEIGHT / 2.0f) - (BALL_HEIGHT / 2.0f));
+
+    Ball gameBall(initBallPos, Vector(BALL_S, 0.0f));
+
+    Vector initPaddle1Pos = Vector(50.0f , (WINDOW_HEIGHT / 2.0f) - (p1Height / 2.0f));
+
+    Paddle playerOne(initPaddle1Pos, Vector(0.0f, 0.0f),p1Height);
+
+    Vector initPaddle2Pos = Vector(WINDOW_WIDTH - 50.0f, (WINDOW_HEIGHT / 2.0f) - (p2Height / 2.0f));
+
+    Paddle playerTwo(initPaddle2Pos, Vector(0.0f, 0.0f),p2Height);
+
+    Mix_Chunk* wallHit = Mix_LoadWAV("wall.wav");
+    Mix_Chunk* paddleHit = Mix_LoadWAV("paddle.wav");
+    Mix_Chunk* pointScored = Mix_LoadWAV("point.wav");
+    Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3");
 
     // Game logic
     {
@@ -388,7 +402,7 @@ int main() {
                 }
             }
 
-           if(buttons[Buttons::P1Up]){
+            if(buttons[Buttons::P1Up]){
                 setVelocity(playerOne, Vector(0.0f, -p1Speed));
             }
             else if(buttons[Buttons::P1Down]){
@@ -428,16 +442,16 @@ int main() {
             // Update and draw the ball
             gameBall.update(dt);
 
-            contact contact1 = CheckPaddleCollision(gameBall, playerOne);
+            contact contact1 = CheckPaddleCollision(gameBall, playerOne,p1Height);
 
-            if (contact1 = CheckPaddleCollision(gameBall, playerOne);
+            if (contact1 = CheckPaddleCollision(gameBall, playerOne,p1Height);
 	            contact1.type != collisionTypes::none)
             {
             	gameBall.collideWithPaddle(contact1);
 
                 Mix_PlayChannel(-1, paddleHit, 0);
             }
-            else if (contact1 = CheckPaddleCollision(gameBall, playerTwo);
+            else if (contact1 = CheckPaddleCollision(gameBall, playerTwo,p2Height);
             	contact1.type != collisionTypes::none)
             {
             	gameBall.collideWithPaddle(contact1);
