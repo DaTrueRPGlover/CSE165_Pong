@@ -365,6 +365,43 @@ private:
     TTF_Font* startGameFont;
 };
 
+// Function to display the winner result page
+void displayWinner(SDL_Renderer* renderer, TTF_Font* font, const std::string& winnerName) {
+    SDL_Color textColor = { 255, 255, 255 };
+
+    // Create a congratulatory message
+    std::string message = "Congratulations, " + winnerName + "! You won!";
+    SDL_Surface* messageSurface = TTF_RenderText_Solid(font, message.c_str(), textColor);
+    SDL_Texture* messageTexture = SDL_CreateTextureFromSurface(renderer, messageSurface);
+
+    SDL_Rect messageRect;
+    messageRect.w = messageSurface->w;
+    messageRect.h = messageSurface->h;
+    messageRect.x = (WINDOW_WIDTH - messageRect.w) / 2; // Center horizontally
+    messageRect.y = (WINDOW_HEIGHT - messageRect.h) / 2; // Center vertically
+
+    // Display the congratulatory message
+    SDL_Event event;
+    bool running = true;
+    while (running) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                running = false;
+            }
+        }
+
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, messageTexture, nullptr, &messageRect);
+        SDL_RenderPresent(renderer);
+    }
+
+    // Cleanup
+    SDL_FreeSurface(messageSurface);
+    SDL_DestroyTexture(messageTexture);
+}
+
+
 int main() {
     // Initialize SDL components
     SDL_Init(SDL_INIT_VIDEO);
@@ -565,6 +602,7 @@ int main() {
         bool buttons[4] = {};
 
         float dt = 0.0f;
+        TTF_Font* winnerFont = TTF_OpenFont("Pixellettersfull-BnJ5.ttf", 50);
 
         // Continue looping and processing events until user exits
         while (running) {
@@ -572,8 +610,16 @@ int main() {
 
             auto startTime = std::chrono::high_resolution_clock::now();
 
-            if (p1Score == 7 || p2Score == 7) {
-                break;//first to 21 wins, add a congrats or something idk
+            // Check if either player's score reaches 7
+            if (p1Score == 7) {
+                // Player 1 wins
+                displayWinner(renderer, winnerFont, "Player 1");
+                break; // Exit the game loop
+            }
+            else if (p2Score == 7) {
+                // Player 2 wins
+                displayWinner(renderer, winnerFont, "Player 2");
+                break; // Exit the game loop
             }
 
             SDL_Event event;
