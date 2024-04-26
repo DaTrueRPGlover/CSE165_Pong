@@ -14,12 +14,15 @@ class Paddle{
 
     public:
     Vector position;
-    Paddle(Vector position, Vector velocity);
+    Paddle(Vector position, Vector velocity,int height);
     void update(float dt);
     void draw(SDL_Renderer* renderer);
 
     friend void setVelocity(Paddle& paddle, Vector newVelocity);
     friend Vector getPosition(const Paddle& paddle);
+
+    private:
+    int height;
 };
 
 #endif
