@@ -30,10 +30,10 @@ const float PADDLE_S_SLOW = 0.3f;
 const int PADDLE_HEIGHT_SHORT = 50;
 const float PADDLE_S_FAST = 2.0f;
 
-const float p1Speed = 0.0f;
-const float p2Speed=0.0f;
-const int p1Height = 0;
-const int p2Height = 0;
+ float p1Speed = 0.0f;
+ float p2Speed=0.0f;
+ int p1Height = 0;
+int p2Height = 0;
 
 
 // Vector definitions
@@ -448,27 +448,7 @@ int main() {
         }
     }
 
-    PlayerScore playerOneScoreText(Vector(WINDOW_WIDTH / 4, 20), renderer, scoreFont);
-
-    PlayerScore playerTwoScoreText(Vector(3 * WINDOW_WIDTH / 4, 20), renderer, scoreFont);
-
-
-    Vector initBallPos = Vector((WINDOW_WIDTH / 2.0f) - (BALL_WIDTH / 2.0f), (WINDOW_HEIGHT / 2.0f) - (BALL_HEIGHT / 2.0f));
-
-    Ball gameBall(initBallPos, Vector(BALL_S, 0.0f));
-
-    Vector initPaddle1Pos = Vector(50.0f , (WINDOW_HEIGHT / 2.0f) - (p1Height / 2.0f));
-
-    Paddle playerOne(initPaddle1Pos, Vector(0.0f, 0.0f),p1Height);
-
-    Vector initPaddle2Pos = Vector(WINDOW_WIDTH - 50.0f, (WINDOW_HEIGHT / 2.0f) - (p2Height / 2.0f));
-
-    Paddle playerTwo(initPaddle2Pos, Vector(0.0f, 0.0f),p2Height);
-
-    Mix_Chunk* wallHit = Mix_LoadWAV("wall.wav");
-    Mix_Chunk* paddleHit = Mix_LoadWAV("paddle.wav");
-    Mix_Chunk* pointScored = Mix_LoadWAV("point.wav");
-    Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3");
+    
 
     // Game logic
     {
@@ -606,8 +586,12 @@ int main() {
 
             gameBall.draw(renderer);
 
-            playerOne.draw(renderer);
-            playerTwo.draw(renderer);
+
+
+
+            playerOne.draw(renderer,p1Height);
+            playerTwo.draw(renderer,p2Height);
+
 
             playerOneScoreText.Draw();
             playerTwoScoreText.Draw();
