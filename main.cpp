@@ -126,73 +126,61 @@ void setVelocity(Paddle& paddle, Vector newVelocity){
     paddle.velocity = newVelocity;
 }
 
-contact CheckPaddleCollision(Ball const& ball, Paddle const& paddle)
-{
-	float ballLeft = ball.position.x;
-	float ballRight = ball.position.x + BALL_WIDTH;
-	float ballTop = ball.position.y;
-	float ballBottom = ball.position.y + BALL_HEIGHT;
+contact CheckPaddleCollision(Ball const& ball, Paddle const& paddle){
+	float bLeft = ball.position.x;
+	float bRight = ball.position.x + BALL_WIDTH;
+	float bTop = ball.position.y;
+	float bBottom = ball.position.y + BALL_HEIGHT;
 
-	float paddleLeft = paddle.position.x;
-	float paddleRight = paddle.position.x + PADDLE_WIDTH;
-	float paddleTop = paddle.position.y;
-	float paddleBottom = paddle.position.y + PADDLE_HEIGHT_NORM;
+	float pLeft = paddle.position.x;
+	float pRight = paddle.position.x + PADDLE_WIDTH;
+	float pTop = paddle.position.y;
+	float pBottom = paddle.position.y + PADDLE_HEIGHT_NORM;
 
     contact contact{};
 
-	if (ballLeft >= paddleRight)
-	{
+	if (bLeft >= pRight){
 		return contact;
 	}
 
-	if (ballRight <= paddleLeft)
-	{
+	if (bRight <= pLeft){
 		return contact;
 	}
 
-	if (ballTop >= paddleBottom)
-	{
+	if (bTop >= pBottom){
 		return contact;
 	}
 
-	if (ballBottom <= paddleTop)
-	{
+	if (bBottom <= pTop){
 		return contact;
 	}
 
-	float paddleRangeUpper = paddleBottom - (2.0f * PADDLE_HEIGHT_NORM / 3.0f);
-	float paddleRangeMiddle = paddleBottom - (PADDLE_HEIGHT_NORM / 3.0f);
+	float pUpper = pBottom - (2.0f * PADDLE_HEIGHT_NORM / 3.0f);
+	float pMiddle = pBottom - (PADDLE_HEIGHT_NORM / 3.0f);
 
-	if (ball.velocity.x < 0)
-	{
+	if (ball.velocity.x < 0){
 		// Left paddle
-		contact.penetration = paddleRight - ballLeft;
+		contact.penetration = pRight - bLeft;
 	}
-	else if (ball.velocity.x > 0)
-	{
+	else if (ball.velocity.x > 0){
 		// Right paddle
-		contact.penetration = paddleLeft - ballRight;
+		contact.penetration = pLeft - bRight;
 	}
 
-	if ((ballBottom > paddleTop)
-	    && (ballBottom < paddleRangeUpper))
-	{
+	if ((bBottom > pTop) && (bBottom < pUpper)){
 		contact.type = collisionTypes::top;
 	}
-	else if ((ballBottom > paddleRangeUpper)
-	     && (ballBottom < paddleRangeMiddle))
-	{
+	else if ((bBottom > pUpper) && (bBottom < pMiddle)){
 		contact.type = collisionTypes::mid;
 	}
-	else
-	{
+	else{
 		contact.type = collisionTypes::bottom;
 	}
 
 	return contact;
 }
 
-contact CheckWallCollision(Ball const& ball)
+contact wallCollision(Ball const& ball)
 {
 	float bLeft = ball.position.x;
 	float bRight = ball.position.x + BALL_WIDTH;
@@ -223,32 +211,29 @@ contact CheckWallCollision(Ball const& ball)
 	return contact;
 }
 
-class PlayerScore
-{
+class PlayerScore{
 public:
-	PlayerScore(Vector position, SDL_Renderer* renderer, TTF_Font* font)
-		: renderer(renderer), font(font)
-	{
+	PlayerScore(Vector position, SDL_Renderer* renderer, TTF_Font* font){
+        this->renderer = renderer;
+        this->font = font;
 		surface = TTF_RenderText_Solid(font, "0", {0xFF, 0xFF, 0xFF, 0xFF});
 		texture = SDL_CreateTextureFromSurface(renderer, surface);
 
-		int width, height;
-		SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+		int w, h;
+		SDL_QueryTexture(texture, nullptr, nullptr, &w, &h);
 
 		rect.x = static_cast<int>(position.x);
 		rect.y = static_cast<int>(position.y);
-		rect.w = width;
-		rect.h = height;
+		rect.w = w;
+		rect.h = h;
 	}
 
-	~PlayerScore()
-	{
+	~PlayerScore(){
 		SDL_FreeSurface(surface);
 		SDL_DestroyTexture(texture);
 	}
 
-	void Draw()
-	{
+	void Draw(){
 		SDL_RenderCopy(renderer, texture, nullptr, &rect);
 	}
 
@@ -259,10 +244,10 @@ public:
         surface = TTF_RenderText_Solid(font, std::to_string(score).c_str(), {0xFF, 0xFF, 0xFF, 0xFF});
         texture = SDL_CreateTextureFromSurface(renderer, surface);
 
-        int width, height;
-        SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
-        rect.w = width;
-        rect.h = height;
+        int w, h;
+        SDL_QueryTexture(texture, nullptr, nullptr, &w, &h);
+        rect.w = w;
+        rect.h = h;
     }
 
 	SDL_Renderer* renderer;
@@ -314,7 +299,7 @@ int main() {
         while (running) {
             auto startTime = std::chrono::high_resolution_clock::now();
 
-            if( p1Score==21 || p2Score==21 ){
+            if( p1Score==7 || p2Score==7 ){
                 break;//first to 21 wins, add a congrats or something idk
             }
 
@@ -408,7 +393,7 @@ int main() {
             {
             	gameBall.collideWithPaddle(contact1);
             }
-            else if (contact1 = CheckWallCollision(gameBall); contact1.type != collisionTypes::none){
+            else if (contact1 = wallCollision(gameBall); contact1.type != collisionTypes::none){
                 gameBall.collideWithWall(contact1);
             }
 
@@ -443,7 +428,7 @@ int main() {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
    	TTF_CloseFont(scoreFont);
-    	TTF_Quit();
+    TTF_Quit();
 	SDL_Quit();
 
 	return 0;
