@@ -479,9 +479,12 @@ int main() {
 
             gameBall.draw(renderer);
 
-            //cf changed
-            playerOne.draw(renderer, PADDLE_HEIGHT_NORM);
-            playerTwo.draw(renderer, PADDLE_HEIGHT_NORM);
+
+
+
+            playerOne.draw(renderer,p1Height);
+            playerTwo.draw(renderer,p2Height);
+
 
             playerOneScoreText.Draw();
             playerTwoScoreText.Draw();
