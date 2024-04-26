@@ -479,8 +479,8 @@ int main() {
 
             gameBall.draw(renderer);
 
-            playerOne.draw(renderer);
-            playerTwo.draw(renderer);
+            playerOne.draw(renderer,p1Height);
+            playerTwo.draw(renderer,p2Height);
 
             playerOneScoreText.Draw();
             playerTwoScoreText.Draw();
