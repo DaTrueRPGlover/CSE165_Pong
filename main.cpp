@@ -32,10 +32,7 @@ const float PADDLE_S_SLOW = 0.3f;
 const int PADDLE_HEIGHT_SHORT = 50;
 const float PADDLE_S_FAST = 2.0f;
 
-/*float p1Speed = 0.0f;
-float p2Speed = 0.0f;
-int p1Height = 0;
-int p2Height = 0;*/
+
 
 float Speed = 0.0f;
 int Height = 0;
