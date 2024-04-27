@@ -272,14 +272,11 @@ public:
         // Load font with the specified font sizes
         titleFont = TTF_OpenFont(fontPath, 200);
         optionFont = TTF_OpenFont(fontPath, 55);
-        startGameFont = TTF_OpenFont(fontPath, 35);
-
-
+        startGameFont = TTF_OpenFont(fontPath, 40);
 
         // Play the background music
         Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3");
         Mix_PlayChannel(-1, menuMusic, 0);
-
 
     }
 
@@ -294,9 +291,7 @@ public:
 
         SDL_Color textColor = { 255, 255, 255 };
 
-
         // Pong Title
-         // Pong Title
         SDL_Surface* titleSurface = TTF_RenderText_Solid(titleFont, "PONG", textColor);
         SDL_Texture* titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
         SDL_Rect titleRect;
@@ -305,17 +300,10 @@ public:
         titleRect.x = (WINDOW_WIDTH - titleRect.w) / 2; // Center horizontally
         titleRect.y = WINDOW_HEIGHT / 4;
 
-        // Option text
-        SDL_Surface* optionSurface = TTF_RenderText_Solid(optionFont, "Press 1 for Player 1 or 2 for Player 2", textColor);
-        SDL_Texture* optionTexture = SDL_CreateTextureFromSurface(renderer, optionSurface);
-        SDL_Rect optionRect;
-        optionRect.w = optionSurface->w;
-        optionRect.h = optionSurface->h;
-        optionRect.x = (WINDOW_WIDTH - optionRect.w) / 2; // Center horizontally
-        optionRect.y = WINDOW_HEIGHT / 2;
+
 
         // Start game text
-        SDL_Surface* startSurface = TTF_RenderText_Solid(startGameFont, "Press SPACE to Start", textColor);
+        SDL_Surface* startSurface = TTF_RenderText_Solid(startGameFont, "Press SPACE to Play and X to exit", textColor);
         SDL_Texture* startTexture = SDL_CreateTextureFromSurface(renderer, startSurface);
         SDL_Rect startRect;
         startRect.w = startSurface->w;
@@ -326,16 +314,35 @@ public:
 
         bool starting = true;
         SDL_Event event;
+        int pChoice = 0;
 
         while (starting) {
             while (SDL_PollEvent(&event)) {
                 if (event.type == SDL_QUIT) {
                     SDL_FreeSurface(startSurface);
                     SDL_DestroyTexture(startTexture);
-                    return;
+                    exit(0);
+                    break;
                 }
                 else if (event.type == SDL_KEYDOWN) {
-                    if (event.key.keysym.sym == SDLK_SPACE) {
+                    if (event.key.keysym.sym == SDLK_x) {
+                        SDL_FreeSurface(startSurface);
+                        SDL_FreeSurface(titleSurface);
+                        SDL_DestroyTexture(startTexture);
+                        SDL_DestroyTexture(titleTexture);
+                        exit(0);
+                        break;
+                    }
+
+                    else if (event.key.keysym.sym == SDLK_1) {
+                        pChoice = 1;
+
+                    }
+                    else if (event.key.keysym.sym == SDLK_2) {
+                        pChoice = 2;
+                    }
+
+                    else if (event.key.keysym.sym == SDLK_SPACE) {
                         starting = false;
                     }
                 }
@@ -344,15 +351,12 @@ public:
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             SDL_RenderClear(renderer);
             SDL_RenderCopy(renderer, titleTexture, nullptr, &titleRect);
-            SDL_RenderCopy(renderer, optionTexture, nullptr, &optionRect);
             SDL_RenderCopy(renderer, startTexture, nullptr, &startRect);
             SDL_RenderPresent(renderer);
         }
         SDL_FreeSurface(startSurface);
-        SDL_FreeSurface(optionSurface);
         SDL_FreeSurface(titleSurface);
         SDL_DestroyTexture(startTexture);
-        SDL_DestroyTexture(optionTexture);
         SDL_DestroyTexture(titleTexture);
 
     }
@@ -496,7 +500,7 @@ int main() {
     Mix_Chunk* wallHit = Mix_LoadWAV("wall.wav");
     Mix_Chunk* paddleHit = Mix_LoadWAV("paddle.wav");
     Mix_Chunk* pointScored = Mix_LoadWAV("point.wav");
-    Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3");
+    //Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3");
 
     // Game logic
     {
@@ -528,43 +532,61 @@ int main() {
                 break; // Exit the game loop
             }
 
+            SDL_Surface* startSurface = nullptr;
+            SDL_Texture* startTexture = nullptr;
+
             SDL_Event event;
             while (SDL_PollEvent(&event)) {
-                if (event.type == SDL_QUIT) {
+                switch (event.type) {
+                case SDL_QUIT:
                     running = false;
-                }
-                else if (event.type == SDL_KEYDOWN) {
-                    if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    break;
+                case SDL_KEYDOWN:
+                    switch (event.key.keysym.sym) {
+                    case SDLK_x: // Handle Escape key press
+                        SDL_FreeSurface(startSurface);
+                        SDL_DestroyTexture(startTexture);
                         running = false;
-                    }
-                    else if (event.key.keysym.sym == SDLK_w) {
+                        break;
+                    case SDLK_w:
                         buttons[Buttons::P1Up] = true;
-                    }
-                    else if (event.key.keysym.sym == SDLK_s) {
+                        break;
+                    case SDLK_s:
                         buttons[Buttons::P1Down] = true;
-                    }
-                    else if (event.key.keysym.sym == SDLK_UP) {
+                        break;
+                    case SDLK_UP:
                         buttons[Buttons::P2Up] = true;
-                    }
-                    else if (event.key.keysym.sym == SDLK_DOWN) {
+                        break;
+                    case SDLK_DOWN:
                         buttons[Buttons::P2Down] = true;
+                        break;
+
+
                     }
-                }
-                else if (event.type == SDL_KEYUP) {
-                    if (event.key.keysym.sym == SDLK_w) {
+                    break;
+
+
+                case SDL_KEYUP:
+                    switch (event.key.keysym.sym) {
+                    case SDLK_w:
                         buttons[Buttons::P1Up] = false;
-                    }
-                    else if (event.key.keysym.sym == SDLK_s) {
+                        break;
+                    case SDLK_s:
                         buttons[Buttons::P1Down] = false;
-                    }
-                    else if (event.key.keysym.sym == SDLK_UP) {
+                        break;
+                    case SDLK_UP:
                         buttons[Buttons::P2Up] = false;
-                    }
-                    else if (event.key.keysym.sym == SDLK_DOWN) {
+                        break;
+                    case SDLK_DOWN:
                         buttons[Buttons::P2Down] = false;
+                        break;
                     }
+                    break;
+
                 }
             }
+
+            // Update the player paddles speed
 
             if (buttons[Buttons::P1Up]) {
                 setVelocity(playerOne, Vector(0.0f, -p1Speed));
