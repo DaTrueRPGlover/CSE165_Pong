@@ -294,8 +294,6 @@ public:
 
         SDL_Color textColor = { 255, 255, 255 };
 
-
-        // Pong Title
          // Pong Title
         SDL_Surface* titleSurface = TTF_RenderText_Solid(titleFont, "PONG", textColor);
         SDL_Texture* titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
@@ -369,8 +367,15 @@ private:
 void displayWinner(SDL_Renderer* renderer, TTF_Font* font, const std::string& winnerName) {
     SDL_Color textColor = { 255, 255, 255 };
 
+
+    Mix_Chunk* menuMusic = Mix_LoadWAV("winner.mp3");
+    Mix_PlayChannel(-1, menuMusic, -1); // Use -1 to loop indefinitely
+    Mix_HaltChannel(-1);// Stop the menu music
+    Mix_Chunk* gameOverMusic = Mix_LoadWAV("winner.mp3");
+    Mix_PlayChannel(-1, gameOverMusic, 0); // Play the game over music
+
     // Create a congratulatory message
-    std::string message = "Congratulations, " + winnerName + "! You won!";
+    std::string message = "GAME OVER! Congratulations, " + winnerName + "! You won!";
     SDL_Surface* messageSurface = TTF_RenderText_Solid(font, message.c_str(), textColor);
     SDL_Texture* messageTexture = SDL_CreateTextureFromSurface(renderer, messageSurface);
 
@@ -522,6 +527,8 @@ int main() {
                 break; // Exit the game loop
             }
 
+
+
             SDL_Event event;
             while (SDL_PollEvent(&event)) {
                 if (event.type == SDL_QUIT) {
@@ -637,7 +644,6 @@ int main() {
             }
 
             gameBall.draw(renderer);
-
 
 
 
