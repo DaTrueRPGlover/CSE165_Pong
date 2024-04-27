@@ -365,6 +365,43 @@ private:
     TTF_Font* startGameFont;
 };
 
+// Function to display the winner result page
+void displayWinner(SDL_Renderer* renderer, TTF_Font* font, const std::string& winnerName) {
+    SDL_Color textColor = { 255, 255, 255 };
+
+    // Create a congratulatory message
+    std::string message = "Congratulations, " + winnerName + "! You won!";
+    SDL_Surface* messageSurface = TTF_RenderText_Solid(font, message.c_str(), textColor);
+    SDL_Texture* messageTexture = SDL_CreateTextureFromSurface(renderer, messageSurface);
+
+    SDL_Rect messageRect;
+    messageRect.w = messageSurface->w;
+    messageRect.h = messageSurface->h;
+    messageRect.x = (WINDOW_WIDTH - messageRect.w) / 2; // Center horizontally
+    messageRect.y = (WINDOW_HEIGHT - messageRect.h) / 2; // Center vertically
+
+    // Display the congratulatory message
+    SDL_Event event;
+    bool running = true;
+    while (running) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                running = false;
+            }
+        }
+
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, messageTexture, nullptr, &messageRect);
+        SDL_RenderPresent(renderer);
+    }
+
+    // Cleanup
+    SDL_FreeSurface(messageSurface);
+    SDL_DestroyTexture(messageTexture);
+}
+
+
 int main() {
     // Initialize SDL components
     SDL_Init(SDL_INIT_VIDEO);
@@ -376,107 +413,7 @@ int main() {
 
     TTF_Font* scoreFont = TTF_OpenFont("Pixellettersfull-BnJ5.ttf", 120);
 
-    class StartMenu {
-    public:
-        StartMenu(SDL_Renderer* renderer, const char* fontPath) : renderer(renderer) {
-
-
-            // Load font with the specified font sizes
-            titleFont = TTF_OpenFont(fontPath, 200);
-            optionFont = TTF_OpenFont(fontPath, 55);
-            startGameFont = TTF_OpenFont(fontPath, 35);
-
-
-
-            // Play the background music
-            Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3");
-            Mix_PlayChannel(-1, menuMusic, 0);
-
-
-        }
-
-        ~StartMenu() {
-            // Close the fonts when the StartMenu object is destroyed
-            if (titleFont) TTF_CloseFont(titleFont);
-            if (optionFont) TTF_CloseFont(optionFont);
-            if (startGameFont) TTF_CloseFont(startGameFont);
-        }
-
-        void display() {
-
-            SDL_Color textColor = { 255, 255, 255 };
-
-
-            // Pong Title
-             // Pong Title
-            SDL_Surface* titleSurface = TTF_RenderText_Solid(titleFont, "PONG", textColor);
-            SDL_Texture* titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
-            SDL_Rect titleRect;
-            titleRect.w = titleSurface->w;
-            titleRect.h = titleSurface->h;
-            titleRect.x = (WINDOW_WIDTH - titleRect.w) / 2; // Center horizontally
-            titleRect.y = WINDOW_HEIGHT / 4;
-
-            // Option text
-            SDL_Surface* optionSurface = TTF_RenderText_Solid(optionFont, "Press 1 for Player 1 or 2 for Player 2", textColor);
-            SDL_Texture* optionTexture = SDL_CreateTextureFromSurface(renderer, optionSurface);
-            SDL_Rect optionRect;
-            optionRect.w = optionSurface->w;
-            optionRect.h = optionSurface->h;
-            optionRect.x = (WINDOW_WIDTH - optionRect.w) / 2; // Center horizontally
-            optionRect.y = WINDOW_HEIGHT / 2;
-
-            // Start game text
-            SDL_Surface* startSurface = TTF_RenderText_Solid(startGameFont, "Press SPACE to Start", textColor);
-            SDL_Texture* startTexture = SDL_CreateTextureFromSurface(renderer, startSurface);
-            SDL_Rect startRect;
-            startRect.w = startSurface->w;
-            startRect.h = startSurface->h;
-            startRect.x = (WINDOW_WIDTH - startRect.w) / 2; // Center horizontally
-            startRect.y = WINDOW_HEIGHT - startRect.h - 50; // Position close to the bottom
-
-
-            bool starting = true;
-            SDL_Event event;
-
-            while (starting) {
-                while (SDL_PollEvent(&event)) {
-                    if (event.type == SDL_QUIT) {
-                        SDL_FreeSurface(startSurface);
-                        SDL_DestroyTexture(startTexture);
-                        return;
-                    }
-                    else if (event.type == SDL_KEYDOWN) {
-                        if (event.key.keysym.sym == SDLK_SPACE) {
-                            starting = false;
-                        }
-                    }
-                }
-
-                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                SDL_RenderClear(renderer);
-                SDL_RenderCopy(renderer, titleTexture, nullptr, &titleRect);
-                SDL_RenderCopy(renderer, optionTexture, nullptr, &optionRect);
-                SDL_RenderCopy(renderer, startTexture, nullptr, &startRect);
-                SDL_RenderPresent(renderer);
-            }
-            SDL_FreeSurface(startSurface);
-            SDL_FreeSurface(optionSurface);
-            SDL_FreeSurface(titleSurface);
-            SDL_DestroyTexture(startTexture);
-            SDL_DestroyTexture(optionTexture);
-            SDL_DestroyTexture(titleTexture);
-
-        }
-
-    private:
-        SDL_Renderer* renderer;
-
-        TTF_Font* titleFont;
-        TTF_Font* optionFont;
-        TTF_Font* startGameFont;
-    };
-
+    
 
     //starting menu
     // Create StartMenu instance
@@ -565,6 +502,7 @@ int main() {
         bool buttons[4] = {};
 
         float dt = 0.0f;
+        TTF_Font* winnerFont = TTF_OpenFont("Pixellettersfull-BnJ5.ttf", 50);
 
         // Continue looping and processing events until user exits
         while (running) {
@@ -572,8 +510,16 @@ int main() {
 
             auto startTime = std::chrono::high_resolution_clock::now();
 
-            if (p1Score == 7 || p2Score == 7) {
-                break;//first to 21 wins, add a congrats or something idk
+            // Check if either player's score reaches 7
+            if (p1Score == 7) {
+                // Player 1 wins
+                displayWinner(renderer, winnerFont, "Player 1");
+                break; // Exit the game loop
+            }
+            else if (p2Score == 7) {
+                // Player 2 wins
+                displayWinner(renderer, winnerFont, "Player 2");
+                break; // Exit the game loop
             }
 
             SDL_Event event;
