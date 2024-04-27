@@ -3,7 +3,7 @@
 #include "ball.h"
 #include "paddle.h"
 #include "StartMenu.h"
-#include "difficultyMenu.h"
+#include "DifficultyMenu.h"
 #include <chrono>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -32,10 +32,13 @@ const float PADDLE_S_SLOW = 0.3f;
 const int PADDLE_HEIGHT_SHORT = 50;
 const float PADDLE_S_FAST = 2.0f;
 
-float p1Speed = 0.0f;
+/*float p1Speed = 0.0f;
 float p2Speed = 0.0f;
 int p1Height = 0;
-int p2Height = 0;
+int p2Height = 0;*/
+
+float Speed = 0.0f;
+int Height = 0;
 
 
 // Vector definitions
@@ -276,10 +279,10 @@ void displayWinner(SDL_Renderer* renderer, TTF_Font* font, const std::string& wi
     Mix_PlayChannel(-1, menuMusic, -1); // Use -1 to loop indefinitely
     Mix_HaltChannel(-1);// Stop the menu music
     Mix_Chunk* gameOverMusic = Mix_LoadWAV("winner.mp3");
-    Mix_PlayChannel(-1, gameOverMusic, 0); // Play the game over music
+    Mix_PlayChannel(-1, gameOverMusic, -1); // Play the game over music
 
     // Create a congratulatory message
-    std::string message = "GAME OVER! \n Congratulations, " + winnerName + "! You won!";
+    std::string message = "             GAME OVER! \n Congratulations, " + winnerName + "! You won!";
     SDL_Surface* messageSurface = TTF_RenderText_Solid_Wrapped(font, message.c_str(), textColor, 0);
     SDL_Texture* messageTexture = SDL_CreateTextureFromSurface(renderer, messageSurface);
 
@@ -342,41 +345,27 @@ int main() {
         while (starting) {
             //implement gui code here
             if (difficultylevel == 0) {
-                p1Speed = PADDLE_S_SLOW;
-                p1Height = PADDLE_HEIGHT_TALL;
+                Speed = PADDLE_S_SLOW;
+                Height = PADDLE_HEIGHT_TALL;
+                
             }
             else if (difficultylevel == 1) {
-                p1Speed = PADDLE_S_NORM;
-                p1Height = PADDLE_HEIGHT_NORM;
+                Speed = PADDLE_S_NORM;
+                Height = PADDLE_HEIGHT_NORM;
+                
             }
             else if (difficultylevel == 2) {
-                p1Speed = PADDLE_S_FAST;
-                p1Height = PADDLE_HEIGHT_SHORT;
+                Speed = PADDLE_S_FAST;
+                Height = PADDLE_HEIGHT_SHORT;
+                
             }
             else {
-                p1Speed = PADDLE_S_NORM;
-                p1Height = PADDLE_HEIGHT_NORM;
+                Speed = PADDLE_S_NORM;
+                Height = PADDLE_HEIGHT_NORM;
             }
-            break;
+           break;
 
-           /* if (p2Choice == 0) {
-                p2Speed = PADDLE_S_SLOW;
-                p2Height = PADDLE_HEIGHT_TALL;
-            }
-            else if (p2Choice == 1) {
-                p2Speed = PADDLE_S_NORM;
-                p2Height = PADDLE_HEIGHT_NORM;
-            }
-            else if (p2Choice == 2) {
-                p2Speed = PADDLE_S_FAST;
-                p2Height = PADDLE_HEIGHT_SHORT;
-            }
-            else {
-                p2Speed = PADDLE_S_NORM;
-                p2Height = PADDLE_HEIGHT_NORM;
-            }*/
-            //if start is clicked
-           // break;
+           
         }
     }
 
@@ -389,13 +378,13 @@ int main() {
 
     Ball gameBall(initBallPos, Vector(BALL_S, 0.0f));
 
-    Vector initPaddle1Pos = Vector(50.0f, (WINDOW_HEIGHT / 2.0f) - (p1Height / 2.0f));
+    Vector initPaddle1Pos = Vector(50.0f, (WINDOW_HEIGHT / 2.0f) - (Height / 2.0f));
 
-    Paddle playerOne(initPaddle1Pos, Vector(0.0f, 0.0f), p1Height);
+    Paddle playerOne(initPaddle1Pos, Vector(0.0f, 0.0f), Height);
 
-    Vector initPaddle2Pos = Vector(WINDOW_WIDTH - 50.0f, (WINDOW_HEIGHT / 2.0f) - (p2Height / 2.0f));
+    Vector initPaddle2Pos = Vector(WINDOW_WIDTH - 50.0f, (WINDOW_HEIGHT / 2.0f) - (Height / 2.0f));
 
-    Paddle playerTwo(initPaddle2Pos, Vector(0.0f, 0.0f), p2Height);
+    Paddle playerTwo(initPaddle2Pos, Vector(0.0f, 0.0f), Height);
 
     Mix_Chunk* wallHit = Mix_LoadWAV("wall.wav");
     Mix_Chunk* paddleHit = Mix_LoadWAV("paddle.wav");
@@ -489,20 +478,20 @@ int main() {
             // Update the player paddles speed
 
             if (buttons[Buttons::P1Up]) {
-                setVelocity(playerOne, Vector(0.0f, -p1Speed));
+                setVelocity(playerOne, Vector(0.0f, -Speed));
             }
             else if (buttons[Buttons::P1Down]) {
-                setVelocity(playerOne, Vector(0.0f, p1Speed));
+                setVelocity(playerOne, Vector(0.0f, Speed));
             }
             else {
                 setVelocity(playerOne, Vector(0.0f, 0.0f));
             }
 
             if (buttons[Buttons::P2Up]) {
-                setVelocity(playerTwo, Vector(0.0f, -p2Speed));
+                setVelocity(playerTwo, Vector(0.0f, -Speed));
             }
             else if (buttons[Buttons::P2Down]) {
-                setVelocity(playerTwo, Vector(0.0f, p2Speed));
+                setVelocity(playerTwo, Vector(0.0f, Speed));
             }
             else {
                 setVelocity(playerTwo, Vector(0.0f, 0.0f));
@@ -522,22 +511,22 @@ int main() {
                 }
             }
 
-            playerOne.update(dt, p1Height);
-            playerTwo.update(dt, p2Height);
+            playerOne.update(dt, Height);
+            playerTwo.update(dt, Height);
 
             // Update and draw the ball
             gameBall.update(dt);
 
-            contact contact1 = CheckPaddleCollision(gameBall, playerOne, p1Height);
+            contact contact1 = CheckPaddleCollision(gameBall, playerOne, Height);
 
-            if (contact1 = CheckPaddleCollision(gameBall, playerOne, p1Height);
+            if (contact1 = CheckPaddleCollision(gameBall, playerOne, Height);
                 contact1.type != collisionTypes::none)
             {
                 gameBall.collideWithPaddle(contact1);
 
                 Mix_PlayChannel(-1, paddleHit, 0);
             }
-            else if (contact1 = CheckPaddleCollision(gameBall, playerTwo, p2Height);
+            else if (contact1 = CheckPaddleCollision(gameBall, playerTwo, Height);
                 contact1.type != collisionTypes::none)
             {
                 gameBall.collideWithPaddle(contact1);
@@ -569,8 +558,8 @@ int main() {
 
 
 
-            playerOne.draw(renderer, p1Height);
-            playerTwo.draw(renderer, p2Height);
+            playerOne.draw(renderer, Height);
+            playerTwo.draw(renderer, Height);
 
 
             playerOneScoreText.Draw();
