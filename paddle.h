@@ -7,21 +7,21 @@
 #include "Vec.h"
 #include "contact.h"
 
-class Paddle{
+class Paddle {
     //Vector position;
     Vector velocity;
     SDL_Rect rect{};
 
-    public:
+public:
     Vector position;
-    Paddle(Vector position, Vector velocity,int height);
-    void update(float dt,int height);
-    void draw(SDL_Renderer* renderer,int height);
+    Paddle(Vector position, Vector velocity, int height);
+    void update(float dt, int height);
+    void draw(SDL_Renderer* renderer, int height);
 
     friend void setVelocity(Paddle& paddle, Vector newVelocity);
     friend Vector getPosition(const Paddle& paddle);
 
-    private:
+private:
     int height;
 };
 
