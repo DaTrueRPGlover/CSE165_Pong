@@ -2,6 +2,7 @@
 #include "contact.h"
 #include "ball.h"
 #include "paddle.h"
+#include "difficultyMenu.h"
 #include <chrono>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -276,7 +277,7 @@ public:
 
         // Play the background music
         Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3");
-        Mix_PlayChannel(-1, menuMusic, 0);
+       Mix_PlayChannel(-1, menuMusic, 0);
 
     }
 
@@ -380,8 +381,8 @@ void displayWinner(SDL_Renderer* renderer, TTF_Font* font, const std::string& wi
     Mix_PlayChannel(-1, gameOverMusic, 0); // Play the game over music
 
     // Create a congratulatory message
-    std::string message = "GAME OVER! Congratulations, " + winnerName + "! You won!";
-    SDL_Surface* messageSurface = TTF_RenderText_Solid(font, message.c_str(), textColor);
+    std::string message = "GAME OVER! \n Congratulations, " + winnerName + "! You won!";
+    SDL_Surface* messageSurface = TTF_RenderText_Solid_Wrapped(font, message.c_str(), textColor, 0);
     SDL_Texture* messageTexture = SDL_CreateTextureFromSurface(renderer, messageSurface);
 
     SDL_Rect messageRect;
@@ -428,29 +429,29 @@ int main() {
     //starting menu
     // Create StartMenu instance
     StartMenu startMenu(renderer, "Pixellettersfull-BnJ5.ttf");
-
     startMenu.display(); // Display the start menu
+
+
+    int difficultylevel = 0;
+    DifficultyMenu difficultyMenu(renderer, "Pixellettersfull-BnJ5.ttf", WINDOW_HEIGHT, WINDOW_WIDTH);
+    difficultyMenu.display(difficultylevel); // Display the start menu
 
     {
         bool starting = true;
-
-        int p1Choice = 0;
-        int p2Choice = 0;
-
 
         //initialize gui  here
 
         while (starting) {
             //implement gui code here
-            if (p1Choice == 0) {
+            if (difficultylevel == 0) {
                 p1Speed = PADDLE_S_SLOW;
                 p1Height = PADDLE_HEIGHT_TALL;
             }
-            else if (p1Choice == 1) {
+            else if (difficultylevel == 1) {
                 p1Speed = PADDLE_S_NORM;
                 p1Height = PADDLE_HEIGHT_NORM;
             }
-            else if (p1Choice == 2) {
+            else if (difficultylevel == 2) {
                 p1Speed = PADDLE_S_FAST;
                 p1Height = PADDLE_HEIGHT_SHORT;
             }
@@ -458,8 +459,9 @@ int main() {
                 p1Speed = PADDLE_S_NORM;
                 p1Height = PADDLE_HEIGHT_NORM;
             }
+            break;
 
-            if (p2Choice == 0) {
+           /* if (p2Choice == 0) {
                 p2Speed = PADDLE_S_SLOW;
                 p2Height = PADDLE_HEIGHT_TALL;
             }
@@ -474,9 +476,9 @@ int main() {
             else {
                 p2Speed = PADDLE_S_NORM;
                 p2Height = PADDLE_HEIGHT_NORM;
-            }
+            }*/
             //if start is clicked
-            break;
+           // break;
         }
     }
 
@@ -500,7 +502,7 @@ int main() {
     Mix_Chunk* wallHit = Mix_LoadWAV("wall.wav");
     Mix_Chunk* paddleHit = Mix_LoadWAV("paddle.wav");
     Mix_Chunk* pointScored = Mix_LoadWAV("point.wav");
-    //Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3");
+    
 
     // Game logic
     {
