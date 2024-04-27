@@ -26,10 +26,10 @@ const float BALL_S = 0.5f;
 const int PADDLE_HEIGHT_NORM = 100;
 const float PADDLE_S_NORM = 1.0f;
 
-const int PADDLE_HEIGHT_TALL = 250;
+const int PADDLE_HEIGHT_TALL = 200;
 const float PADDLE_S_SLOW = 0.3f;
 
-const int PADDLE_HEIGHT_SHORT = 50;
+const int PADDLE_HEIGHT_SHORT = 60;
 const float PADDLE_S_FAST = 2.0f;
 
 
