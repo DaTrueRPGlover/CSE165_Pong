@@ -21,10 +21,6 @@ public:
         WINDOW_WIDTH = width;
         textColor = { 255, 255, 255 };
 
-        // Play the background music
-        //Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3");
-        //Mix_PlayChannel(-1, menuMusic, 0);
-
     }
 
 
