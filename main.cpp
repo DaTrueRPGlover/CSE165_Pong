@@ -272,8 +272,7 @@ public:
 void displayWinner(SDL_Renderer* renderer, TTF_Font* font, const std::string& winnerName) {
     SDL_Color textColor = { 255, 255, 255 };
 
-    Mix_Chunk* menuMusic = Mix_LoadWAV("winner.mp3");
-    Mix_PlayChannel(-1, menuMusic, -1); // Use -1 to loop indefinitely
+    
     Mix_HaltChannel(-1);// Stop the menu music
     Mix_Chunk* gameOverMusic = Mix_LoadWAV("winner.mp3");
     Mix_PlayChannel(-1, gameOverMusic, -1); // Play the game over music
@@ -289,7 +288,7 @@ void displayWinner(SDL_Renderer* renderer, TTF_Font* font, const std::string& wi
     messageRect.x = (WINDOW_WIDTH - messageRect.w) / 2; // Center horizontally
     messageRect.y = (WINDOW_HEIGHT - messageRect.h) / 2; // Center vertically
 
-    // Display the congratulatory message
+  
     SDL_Event event;
     bool running = true;
     while (running) {
@@ -316,17 +315,16 @@ int main() {
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 256);
+    
+    Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3"); // Play the background music
+    Mix_PlayChannel(-1, menuMusic, -1);
 
     SDL_Window* window = SDL_CreateWindow("Pong", 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
-
     TTF_Font* scoreFont = TTF_OpenFont("Pixellettersfull-BnJ5.ttf", 120);
 
-    // Play the background music
-    Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3");
-    Mix_PlayChannel(-1, menuMusic, -1);
 
-    //starting menu
+    //START MENU
     // Create StartMenu instance
     StartMenu startMenu(renderer, "Pixellettersfull-BnJ5.ttf", WINDOW_HEIGHT, WINDOW_WIDTH);
     int result = startMenu.display(); // Display the start menu
@@ -437,7 +435,7 @@ int main() {
                     break;
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym) {
-                    case SDLK_x: // Handle Escape key press
+                    case SDLK_x:
     
                         running = false;
                         break;
@@ -558,7 +556,6 @@ int main() {
             }
 
             gameBall.draw(renderer);
-
 
 
 
