@@ -322,7 +322,9 @@ int main() {
 
     TTF_Font* scoreFont = TTF_OpenFont("Pixellettersfull-BnJ5.ttf", 120);
 
-
+    // Play the background music
+    Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3");
+    Mix_PlayChannel(-1, menuMusic, -1);
 
     //starting menu
     // Create StartMenu instance
