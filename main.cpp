@@ -273,9 +273,9 @@ void displayWinner(SDL_Renderer* renderer, TTF_Font* font, const std::string& wi
     SDL_Color textColor = { 255, 255, 255 };
 
     
-    Mix_HaltChannel(-1);// Stop the menu music
-    Mix_Chunk* gameOverMusic = Mix_LoadWAV("winner.mp3");
-    Mix_PlayChannel(-1, gameOverMusic, -1); // Play the game over music
+    //Mix_HaltChannel(-1);// Stop the menu music
+    Mix_Music* gameOverMusic = Mix_LoadMUS("winner.mp3");
+    Mix_PlayMusic(gameOverMusic, 0); // Play the game over music
 
     // Create a congratulatory message
     std::string message = "             GAME OVER! \n Congratulations, " + winnerName + "! You won!";
@@ -303,6 +303,8 @@ void displayWinner(SDL_Renderer* renderer, TTF_Font* font, const std::string& wi
         SDL_RenderCopy(renderer, messageTexture, nullptr, &messageRect);
         SDL_RenderPresent(renderer);
     }
+
+    Mix_FreeMusic(gameOverMusic);
 
     // Cleanup
     SDL_FreeSurface(messageSurface);
@@ -593,14 +595,14 @@ int main() {
     TTF_CloseFont(scoreFont);
     //std::cout << "quitting!" << std::endl;
 
-    std::cout << "freeing mix!" << std::endl;
+    //std::cout << "freeing mix!" << std::endl;
     Mix_Quit();
     Mix_CloseAudio();
-    std::cout << "freeing ttf quit" << std::endl;
+    //std::cout << "freeing ttf quit" << std::endl;
     TTF_Quit();
-    std::cout << "freeing sdl quit" << std::endl;
+    //std::cout << "freeing sdl quit" << std::endl;
     SDL_Quit();
-    std::cout << "All freed" << std::endl;
+    //std::cout << "All freed" << std::endl;
 
     return 0;
 }
