@@ -1,9 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-//template <typename DisplayValue>
-
-
 
 class Menu {
 private:
