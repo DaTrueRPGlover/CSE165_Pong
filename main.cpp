@@ -327,12 +327,19 @@ int main() {
     //starting menu
     // Create StartMenu instance
     StartMenu startMenu(renderer, "Pixellettersfull-BnJ5.ttf", WINDOW_HEIGHT, WINDOW_WIDTH);
-    startMenu.display(); // Display the start menu
+    int result = startMenu.display(); // Display the start menu
 
+    if (result == 0) {
+        exit(0);
+    }
 
     int difficultylevel = 0;
     DifficultyMenu difficultyMenu(renderer, "Pixellettersfull-BnJ5.ttf", WINDOW_HEIGHT, WINDOW_WIDTH);
-    difficultyMenu.display(difficultylevel); // Display the start menu
+    difficultylevel = difficultyMenu.display(); // Display the start menu
+
+    if (difficultylevel == -1) {
+		exit(0);
+	}
 
     {
         bool starting = true;
@@ -418,8 +425,7 @@ int main() {
                 break; // Exit the game loop
             }
 
-            SDL_Surface* startSurface = nullptr;
-            SDL_Texture* startTexture = nullptr;
+
 
             SDL_Event event;
             while (SDL_PollEvent(&event)) {
@@ -430,8 +436,7 @@ int main() {
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym) {
                     case SDLK_x: // Handle Escape key press
-                        SDL_FreeSurface(startSurface);
-                        SDL_DestroyTexture(startTexture);
+    
                         running = false;
                         break;
                     case SDLK_w:
@@ -571,15 +576,28 @@ int main() {
         }
     }
 
+    std::cout << "Game Over!" << std::endl;
+
     // Cleanup
-    Mix_FreeChunk(wallHit);
-    Mix_FreeChunk(paddleHit);
-    Mix_FreeChunk(pointScored);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    TTF_CloseFont(scoreFont);
+    std::cout << "freeing wallhit!" << std::endl;
+    if (wallHit) Mix_FreeChunk(wallHit);
+    std::cout << "freeing paddlehit!" << std::endl;
+    if (paddleHit) Mix_FreeChunk(paddleHit);
+    std::cout << "freeing pointscored" << std::endl;
+    if (pointScored) Mix_FreeChunk(pointScored);
+    std::cout << "freeing renderer" << std::endl;
+    if (renderer) SDL_DestroyRenderer(renderer);
+    std::cout << "freeing destroywindow!" << std::endl;
+    if (window) SDL_DestroyWindow(window);
+    std::cout << "freeing closefont!" << std::endl;
+    if (scoreFont) TTF_CloseFont(scoreFont);
+    std::cout << "quitting!" << std::endl;
+
+    std::cout << "freeing mix!" << std::endl;
     Mix_Quit();
+    std::cout << "freeing ttf quit" << std::endl;
     TTF_Quit();
+    std::cout << "freeing sdl quit" << std::endl;
     SDL_Quit();
 
     return 0;
