@@ -1,11 +1,12 @@
-(NEED AT LEAST 3 PARAGRAPHS)
-
-For our project, we have decided that we're putting our own spin on the 
-classic game of Pong. 
+In our project, we've chosen to revive the timeless Pong game with a multiplayer twist. We're introducing user-selectable difficulty levels—normal, 
+medium, and hard—where each level adjusts paddle sizes and speed for added challenge.
 
 
-2. The significant feature(s) each member of the group was responsible for
-Cheska is responsible of the implementation of the graphical user
- interface (GUI) utilizing OpenGL.
+The significant feature(s) each member of the group was responsible for:
+Cheska is responsible for the implementation of the graphical user interface (GUI), which includes designing the start menu, difficulty level 
+selection menu, and the screen for the winner. Additionally, she created the general-purpose Menu class to enhance the overall functionality of the system.
 
-3. How you used object-oriented programming concepts in your implementatio
+3. Cheska - In the Pong game's menu design, I employed object-oriented concepts like inheritance and polymorphism. 
+Inheritance facilitated specialized menus such as start and difficulty menus, enabling common functionalities to be reused while allowing for unique behaviors.
+Polymorphism, through virtual functions, tailored menu actions for each type. Encapsulation organized data and methods within menu classes, 
+enhancing code structure and preventing unintended access. Additionally, constructors and destructors were utilized to manage resource initialization and cleanup efficiently.
