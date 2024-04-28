@@ -12,10 +12,7 @@ public:
        
         optionFont = TTF_OpenFont(fontPath, 55);
         startGameFont = TTF_OpenFont(fontPath, 40);
-       
-        // Play the background music
-        //Mix_Chunk* menuMusic = Mix_LoadWAV("mainMenuMusic.mp3");
-        //Mix_PlayChannel(-1, menuMusic, 0);
+
 
     }
 
