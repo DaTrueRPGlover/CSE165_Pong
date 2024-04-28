@@ -3,6 +3,7 @@ medium, and hard—where each level adjusts paddle sizes and speed for added cha
 
 
 The significant feature(s) each member of the group was responsible for:
+Fernando is responsible to create the game and different header files such as Vec.h, ball.h, paddle.h, and some others. Also including music for the game as well as sound effects. All the logic of the game itself such as the movement of the ball and paddle formation thanks to the use of vec and paddles as well as making sure that the code is properly freed it es exited.
 Cheska is responsible for the implementation of the graphical user interface (GUI), which includes designing the start menu, difficulty level 
 selection menu, and the screen for the winner. Additionally, she created the general-purpose Menu class to enhance the overall functionality of the system.
 
@@ -10,3 +11,7 @@ selection menu, and the screen for the winner. Additionally, she created the gen
 Inheritance facilitated specialized menus such as start and difficulty menus, enabling common functionalities to be reused while allowing for unique behaviors.
 Polymorphism, through virtual functions, tailored menu actions for each type. Encapsulation organized data and methods within menu classes, 
 enhancing code structure and preventing unintended access. Additionally, constructors and destructors were utilized to manage resource initialization and cleanup efficiently.
+
+Fernando: In the game's creation I used inheritance and polymosphism in the creation of my vec.h header file since it was used for the creation of other header files such as paddle.h, and ball.h. These two other header files used vec.h to properly work as well as declaring the functions in the header files but not defining them until they were used in main.cpp.
+Proper constructors of ball and paddle classes were also created and some operator definitions were also used the same way that were explained during our class. 
+The usage of VS Code, an alternative to QT was essential to make this code easier to manage and the usage of SDL2, part of OpenGL, allowed for the creationg fo windows for the game and the ability to draw and display the different elements of the game.
