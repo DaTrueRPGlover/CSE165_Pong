@@ -1,39 +1,38 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-
-class Menu {
+class Menu
+{
 private:
-    SDL_Renderer* renderer;
+    SDL_Renderer *renderer;
     int WINDOW_WIDTH;
     int WINDOW_HEIGHT;
-    TTF_Font* titleFont;
+    TTF_Font *titleFont;
     SDL_Color textColor;
 
 public:
-    Menu(SDL_Renderer* renderer, const char* fontPath, int height, int width) : renderer(renderer) {
+    Menu(SDL_Renderer *renderer, const char *fontPath, int height, int width) : renderer(renderer)
+    {
         // Load font with the specified font sizes
         titleFont = TTF_OpenFont(fontPath, 200);
         WINDOW_HEIGHT = height;
         WINDOW_WIDTH = width;
-        textColor = { 255, 255, 255 };
-
+        textColor = {255, 255, 255};
     }
 
-
-   virtual ~Menu() {
+    virtual ~Menu()
+    {
         // Close the fonts when the StartMenu object is destroyed
-        if (titleFont) TTF_CloseFont(titleFont);
-      
+        if (titleFont)
+            TTF_CloseFont(titleFont);
     }
 
-    int display() {
-
-        
+    int display()
+    {
 
         // Pong Title
-        SDL_Surface* titleSurface = TTF_RenderText_Solid(titleFont, "PONG", textColor);
-        SDL_Texture* titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
+        SDL_Surface *titleSurface = TTF_RenderText_Solid(titleFont, "PONG", textColor);
+        SDL_Texture *titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
         SDL_Rect titleRect;
         titleRect.w = titleSurface->w;
         titleRect.h = titleSurface->h;
@@ -51,23 +50,21 @@ public:
         return result;
     }
 
-    
-
 protected:
     virtual int display_menu() = 0;
-    SDL_Renderer* getrenderer() {
+    SDL_Renderer *getrenderer()
+    {
         return renderer;
     }
-   
-    int getWidth() {
+
+    int getWidth()
+    {
         return WINDOW_WIDTH;
     }
-    int getHeight() {
+    int getHeight()
+    {
         return WINDOW_HEIGHT;
     }
 
     virtual void draw_menu() = 0;
-
-  
-
 };
