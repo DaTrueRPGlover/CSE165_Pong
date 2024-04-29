@@ -1,17 +1,39 @@
 In our project, we've chosen to revive the timeless Pong game with a multiplayer twist. We're introducing user-selectable difficulty levels—normal, 
-medium, and hard—where each level adjusts paddle sizes and speed for added challenge.
+medium, and hard—where each level adjusts paddle sizes and speed for added challenge. The different levels have a slow but large paddle, the normal 
+paddle that everyone is familiar with, and a small but fast paddle. When launching the program, it creates a window with a start menu, which then 
+directs users to either press the space bar to continue or to press X to quit the program. Pressing the space bar leads users to the difficulty 
+selection menu which directs users to either press 1, 2, or 3 to select their desired difficulty level. Pressing one of these number keys then leads 
+to the classic game of Pong that we are all familiar with, except for the paddles may be different sizes and speeds depending on what the user selected
+from the previous screen. The paddle on the left is controlled by the W and the S key while the paddle on the right is controlled by the Up and Down arrow
+keys. Once one player reaches 7 points, the game ends and is replaced by a congratulations screen within the same game window. Users can then close the 
+window to terminate the program. 
 
-
-The significant feature(s) each member of the group was responsible for:
-Fernando is responsible to create the game and different header files such as Vec.h, ball.h, paddle.h, and some others. Also including music for the game as well as sound effects. All the logic of the game itself such as the movement of the ball and paddle formation thanks to the use of vec and paddles as well as making sure that the code is properly freed it es exited.
+    The significant feature(s) each member of the group was responsible for:
+Fernando created the base Pong game. Once launching the program, it opens a window where Pong is played(with normal paddles) infinitely or until the 
+program is terminated. He created the ball, contact, paddle, and vector classes. Later on in the development, he added every sound that is heard within 
+the game, from the starting menu, all the way to the congratulations screen. 
 Cheska is responsible for the implementation of the graphical user interface (GUI), which includes designing the start menu, difficulty level 
 selection menu, and the screen for the winner. Additionally, she created the general-purpose Menu class to enhance the overall functionality of the system.
+Ethan was responsible for implementing the different difficulty settings and general bug fixing. 
 
-3. Cheska - In the Pong game's menu design, I employed object-oriented concepts like inheritance and polymorphism. 
+    In the Pong game's menu design, we employed object-oriented concepts like inheritance and polymorphism. 
 Inheritance facilitated specialized menus such as start and difficulty menus, enabling common functionalities to be reused while allowing for unique behaviors.
 Polymorphism, through virtual functions, tailored menu actions for each type. Encapsulation organized data and methods within menu classes, 
-enhancing code structure and preventing unintended access. Additionally, constructors and destructors were utilized to manage resource initialization and cleanup efficiently.
+enhancing code structure and preventing unintended access. Additionally, constructors and destructors were utilized to manage resource initialization and cleanup 
+efficiently.
 
-Fernando: In the game's creation I used inheritance and polymosphism in the creation of my vec.h header file since it was used for the creation of other header files such as paddle.h, and ball.h. These two other header files used vec.h to properly work as well as declaring the functions in the header files but not defining them until they were used in main.cpp.
-Proper constructors of ball and paddle classes were also created and some operator definitions were also used the same way that were explained during our class. 
-The usage of VS Code, an alternative to QT was essential to make this code easier to manage and the usage of SDL2, part of OpenGL, allowed for the creationg fo windows for the game and the ability to draw and display the different elements of the game.
+    Additional Comments:
+When putting everyones part together, we ran into a few issues. The original plan was to have a more comprehensive difficulty selection menu where each player 
+could choose their own paddle speeds/height. Changing the speed was an easy task, as it just required assigning a speed variable for each player. Changing the 
+height of each paddle proved to be somewhat of a challenge. Originally we tried to polymorph the existing paddle class but then realized that we had to rewrite
+or restructure the paddle class to accept private height variables. Once this was all figured out, we tried to put it together with the GUI that Cheska had created
+but realized that, with our time constraints, we could not put everything together as we envisioned. We ended up scrapping individualized difficulties and made it so 
+that both players had the same paddle size and speed. 
+Once everything was finally put together, the program was finally running how we wanted it to. However, when terminating the program in certain instances, there would 
+be a segmentation fault that would pop up. Sometimes, when terminating the menu in the start screen, a segmentation fault would pop up in the terminal with about a 40% 
+chance. Terminating the program in the difficulty menu never revealed any seg faults. However, once the game was actually started, terminating the program would always 
+result in a segmentation fault. Even after one player achieved 7 points and the congratulations would pop up, terminating the program would still result in a 
+segmentation fault. Something weird was that when we commented out the entirety of the memory cleanup at the end, the segmentation fault would disappear. 
+We were not able to find a specific memory cleanup that caused the seg fault, but rather, there was some specific combination of cleanups that would cause it. 
+In the end, we spent a day trying to find the root cause but decided to not stress about it too much because the seg fault would only appear after the game was closed 
+and concluded. 
