@@ -559,8 +559,6 @@ int main() {
 
             gameBall.draw(renderer);
 
-
-
             playerOne.draw(renderer, Height);
             playerTwo.draw(renderer, Height);
 
@@ -577,32 +575,19 @@ int main() {
         }
     }
 
-    std::cout << "Game Over!" << std::endl;
-
     // Cleanup
-    //std::cout << "freeing wallhit!" << std::endl;
     Mix_FreeChunk(wallHit);
-    //std::cout << "freeing paddlehit!" << std::endl;
     Mix_FreeChunk(paddleHit);
-    //std::cout << "freeing pointscored" << std::endl;
     Mix_FreeChunk(pointScored);
-    Mix_FreeMusic(menuMusic);
-    //std::cout << "freeing renderer" << std::endl;
+    
+    Mix_FreeMusic(menuMusic);//freeing music;
     SDL_DestroyRenderer(renderer);
-    //std::cout << "freeing destroywindow!" << std::endl;
     SDL_DestroyWindow(window);
-    //std::cout << "freeing closefont!" << std::endl;
     TTF_CloseFont(scoreFont);
-    //std::cout << "quitting!" << std::endl;
-
-    //std::cout << "freeing mix!" << std::endl;
     Mix_Quit();
     Mix_CloseAudio();
-    //std::cout << "freeing ttf quit" << std::endl;
     TTF_Quit();
-    //std::cout << "freeing sdl quit" << std::endl;
     SDL_Quit();
-    //std::cout << "All freed" << std::endl;
-
+   
     return 0;
 }
